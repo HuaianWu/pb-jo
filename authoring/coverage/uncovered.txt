@@ -1,0 +1,343 @@
+base64.c:30: 		return NULL;
+base64.c:31: 	}
+base64.c:68: {
+base64.c:69: 	if (c>='A' && c<='Z') return c - 'A';
+base64.c:70: 	if (c>='a' && c<='z') return c - 'a' + 26;
+base64.c:71: 	if (c>='0' && c<='9') return c - '0' + 52;
+base64.c:72: 	if (c == '+') return 62;
+base64.c:73: 	if (c == '/') return 63;
+base64.c:74: 	if (c == '=') return -1;
+base64.c:75:     return -2;
+base64.c:76: }
+base64.c:86: {
+base64.c:87:     const char *p;
+base64.c:88:     unsigned char *q, *data;
+base64.c:89:     int n[4] = { 0, 0, 0, 0 };
+base64.c:91: 	size_t len = strlen(s);
+base64.c:92: 	if (len % 4)
+base64.c:93: 		return NULL;
+base64.c:94: 	data = (unsigned char*) malloc(len/4*3);
+base64.c:95: 	q = (unsigned char*) data;
+base64.c:97: 	for (p = s; *p; ) {
+base64.c:98: 	    n[0] = POS(*p++);
+base64.c:99: 	    n[1] = POS(*p++);
+base64.c:100: 	    n[2] = POS(*p++);
+base64.c:101: 	    n[3] = POS(*p++);
+base64.c:103:             if (n[0] == -2 || n[1] == -2 || n[2] == -2 || n[3] == -2)
+base64.c:104:                 return NULL;
+base64.c:106: 	    if (n[0] == -1 || n[1] == -1)
+base64.c:107: 		return NULL;
+base64.c:109: 	    if (n[2] == -1 && n[3] != -1)
+base64.c:110: 		return NULL;
+base64.c:112:             q[0] = (n[0] << 2) + (n[1] >> 4);
+base64.c:113: 	    if (n[2] != -1)
+base64.c:114:                 q[1] = ((n[1] & 15) << 4) + (n[2] >> 2);
+base64.c:115: 	    if (n[3] != -1)
+base64.c:116:                 q[2] = ((n[2] & 3) << 6) + n[3];
+base64.c:117: 	    q += 3;
+base64.c:118: 	}
+base64.c:120: 	*data_len = q-data - (n[2]==-1) - (n[3]==-1);
+base64.c:122: 	return data;
+base64.c:123: }
+jo.c:94: {
+jo.c:95: 	JsonNode *node, *node_child, *obj_child;
+jo.c:97: 	if (obj->tag != JSON_OBJECT && obj->tag != JSON_ARRAY)
+jo.c:98: 		return;
+jo.c:100: 	json_foreach(node, object_or_array) {
+jo.c:101: 		if (!clobber & (json_find_member(obj, node->key) != NULL))
+jo.c:102: 			continue;	/* Don't clobber existing keys */
+jo.c:103: 		if (obj->tag == JSON_OBJECT) {
+jo.c:104: 			if (node->tag == JSON_STRING)
+jo.c:105: 				json_append_member(obj, node->key, json_mkstring(node->string_));
+jo.c:106: 			else if (node->tag == JSON_NUMBER)
+jo.c:107: 				json_append_member(obj, node->key, json_mknumber(node->number_));
+jo.c:108: 			else if (node->tag == JSON_BOOL)
+jo.c:109: 				json_append_member(obj, node->key, json_mkbool(node->bool_));
+jo.c:110: 			else if (node->tag == JSON_NULL)
+jo.c:111: 				json_append_member(obj, node->key, json_mknull());
+jo.c:112: 			else if (node->tag == JSON_OBJECT) {
+jo.c:114: 				json_append_member(obj, node->key, (obj_child = json_mkobject()));
+jo.c:115: 				json_foreach(node_child, node) {
+jo.c:116: 					json_copy_to_object(obj_child, node_child, clobber);
+jo.c:117: 				}
+jo.c:118: 			} else
+jo.c:119: 				fprintf(stderr, "PANIC: unhandled JSON type %d\n", node->tag);
+jo.c:120: 		} else if (obj->tag == JSON_ARRAY) {
+jo.c:121: 			if (node->tag == JSON_STRING)
+jo.c:122: 				json_append_element(obj, json_mkstring(node->string_));
+jo.c:123: 			if (node->tag == JSON_NUMBER)
+jo.c:124: 				json_append_element(obj, json_mknumber(node->number_));
+jo.c:125: 			if (node->tag == JSON_BOOL)
+jo.c:126: 				json_append_element(obj, json_mkbool(node->bool_));
+jo.c:127: 			if (node->tag == JSON_NULL)
+jo.c:128: 				json_append_element(obj, json_mknull());
+jo.c:129: 		}
+jo.c:130: 	}
+jo.c:131: }
+jo.c:142: 		result = -1;
+jo.c:148: 					result = -1;
+jo.c:149: 					break;
+jo.c:150: 				}
+jo.c:158: 		free(buf);
+jo.c:159: 		buf = NULL;
+jo.c:191: 		errx(1, "File %s is too large to be read into memory", filename);
+jo.c:192: 	}
+jo.c:202: 		errx(1, "Line too large to be read into memory");
+jo.c:203: 	}
+jo.c:211: 			break;
+jo.c:214: 			break;
+jo.c:217: 			break;
+jo.c:220: 			break;
+jo.c:228: 			break;
+jo.c:231: 			break;
+jo.c:234: 			break;
+jo.c:243: 			break;
+jo.c:247: 			break;
+jo.c:250: 			break;
+jo.c:262: 			break;
+jo.c:265: 			break;
+jo.c:269: 			break;
+jo.c:327: 				errx(1, "Error reading file %s", filename);
+jo.c:328: 			}
+jo.c:334: 					errx(1, "Cannot base64-encode file %s", filename);
+jo.c:335: 				}
+jo.c:502: 			errx(1, "Error reading file %s", filename);
+jo.c:503: 		}
+jo.c:625: # define locale_from_utf8(p, l) (p)
+jo.c:626: # define locale_free(p) do {} while (0)
+jo.c:729: 			errx(1, "Error reading file %s", in_file);
+jo.c:730: 		}
+jo.c:750: 			return(0);
+jo.c:751: 		}
+jo.c:796: 		JsonNode *o;
+jo.c:798: 		if (op->tag == JSON_ARRAY) {
+jo.c:799: 			o = json_mkarray();
+jo.c:800: 		} else if (op->tag == JSON_OBJECT) {
+jo.c:801: 			o = json_mkobject();
+jo.c:802: 		} else {
+jo.c:803: 			continue;
+jo.c:804: 		}
+jo.c:805: 		json_copy_to_object(o, op, 0);
+jo.c:806: 		json_append_member(json, op->key, o);
+jo.c:807: 	}
+jo.c:811: 		fprintf(stderr, "Invalid JSON\n");
+jo.c:812: 		exit(2);
+jo.c:813: 	}
+json.c:32: #define out_of_memory() do {                    \
+json.c:33: 		fprintf(stderr, "Out of memory.\n");    \
+json.c:34: 		exit(EXIT_FAILURE);                     \
+json.c:35: 	} while (0)
+json.c:55: 		out_of_memory();
+json.c:77: 		out_of_memory();
+json.c:99: 		out_of_memory();
+json.c:176: 		return 0;
+json.c:180: 			return 0;
+json.c:186: 			return 0;
+json.c:190: 			return 0;
+json.c:194: 			return 0;
+json.c:196: 			return 0;
+json.c:202: 			return 0;
+json.c:206: 			return 0;
+json.c:210: 			return 0;
+json.c:212: 			return 0;
+json.c:214: 			return 0;
+json.c:218: 		return 0;
+json.c:219: 	}
+json.c:230: 			return false;
+json.c:255: 		*out = ((js_uchar_t)c[0] & 0x1F) << 6 |
+json.c:256: 		       ((js_uchar_t)c[1] & 0x3F);
+json.c:257: 		return 2;
+json.c:258: 	} else if (c[0] <= 0xEF) {
+json.c:260: 		*out = ((js_uchar_t)c[0] &  0xF) << 12 |
+json.c:261: 		       ((js_uchar_t)c[1] & 0x3F) << 6  |
+json.c:262: 		       ((js_uchar_t)c[2] & 0x3F);
+json.c:263: 		return 3;
+json.c:264: 	} else {
+json.c:266: 		*out = ((js_uchar_t)c[0] &  0x7) << 18 |
+json.c:267: 		       ((js_uchar_t)c[1] & 0x3F) << 12 |
+json.c:268: 		       ((js_uchar_t)c[2] & 0x3F) << 6  |
+json.c:269: 		       ((js_uchar_t)c[3] & 0x3F);
+json.c:270: 		return 4;
+json.c:271: 	}
+json.c:304: 		*o++ = 0xE0 | unicode >> 12;
+json.c:305: 		*o++ = 0x80 | (unicode >> 6 & 0x3F);
+json.c:306: 		*o++ = 0x80 | (unicode & 0x3F);
+json.c:307: 		return 3;
+json.c:308: 	} else {
+json.c:310: 		*o++ = 0xF0 | unicode >> 18;
+json.c:311: 		*o++ = 0x80 | (unicode >> 12 & 0x3F);
+json.c:312: 		*o++ = 0x80 | (unicode >> 6 & 0x3F);
+json.c:313: 		*o++ = 0x80 | (unicode & 0x3F);
+json.c:314: 		return 4;
+json.c:315: 	}
+json.c:325: {
+json.c:326: 	if (uc >= 0xD800 && uc <= 0xDBFF && lc >= 0xDC00 && lc <= 0xDFFF) {
+json.c:327: 		*unicode = 0x10000 + ((((js_uchar_t)uc & 0x3FF) << 10) | (lc & 0x3FF));
+json.c:328: 		return true;
+json.c:329: 	} else {
+json.c:330: 		return false;
+json.c:331: 	}
+json.c:332: }
+json.c:340: {
+json.c:341: 	js_uchar_t n;
+json.c:343: 	failx(
+json.c:344: 		unicode >= 0x10000 && unicode <= 0x10FFFF,
+json.c:345: 		1,
+json.c:346: 		"Cannot construct UTF-16 surrogate pair for Unicode codepoint 0x%08X",
+json.c:347: 		unicode
+json.c:348: 	);
+json.c:350: 	n = unicode - 0x10000;
+json.c:351: 	*uc = ((n >> 10) & 0x3FF) | 0xD800;
+json.c:352: 	*lc = (n & 0x3FF) | 0xDC00;
+json.c:353: }
+json.c:415: {
+json.c:416: 	SB sb;
+json.c:417: 	sb_init(&sb);
+json.c:419: 	emit_string(&sb, str);
+json.c:421: 	return sb_finish(&sb);
+json.c:422: }
+json.c:464: {
+json.c:465: 	const char *s = json;
+json.c:467: 	skip_space(&s);
+json.c:468: 	if (!parse_value(&s, NULL))
+json.c:469: 		return false;
+json.c:471: 	skip_space(&s);
+json.c:472: 	if (*s != 0)
+json.c:473: 		return false;
+json.c:475: 	return true;
+json.c:476: }
+json.c:479: {
+json.c:480: 	JsonNode *element;
+json.c:481: 	int i = 0;
+json.c:483: 	if (array == NULL || array->tag != JSON_ARRAY)
+json.c:484: 		return NULL;
+json.c:486: 	json_foreach(element, array) {
+json.c:487: 		if (i == index)
+json.c:488: 			return element;
+json.c:489: 		i++;
+json.c:490: 	}
+json.c:492: 	return NULL;
+json.c:493: }
+json.c:500: 		return NULL;
+json.c:513: 	return NULL;
+json.c:520: 		out_of_memory();
+json.c:589: 	else
+json.c:590: 		parent->children.tail = child;
+json.c:646: {
+json.c:647: 	if (!element) return;
+json.c:648: 	failx(
+json.c:649: 		array->tag == JSON_ARRAY,
+json.c:650: 		1,
+json.c:651: 		"Cannot append %s to non-array %s",
+json.c:652: 		json_encode(element),
+json.c:653: 		json_encode(array)
+json.c:654: 	);
+json.c:655: 	assert(element->parent == NULL);
+json.c:657: 	prepend_node(array, element);
+json.c:658: }
+json.c:677: {
+json.c:678: 	if (!value) return;
+json.c:679: 	failx(
+json.c:680: 		object->tag == JSON_OBJECT,
+json.c:681: 		1,
+json.c:682: 		"Cannot add {\"%s\":%s} to non-object %s",
+json.c:683: 		key,
+json.c:684: 		json_encode(value),
+json.c:685: 		json_encode(object)
+json.c:686: 	);
+json.c:687: 	assert(value->parent == NULL);
+json.c:689: 	value->key = json_strdup(key);
+json.c:690: 	prepend_node(object, value);
+json.c:691: }
+json.c:741: 			return false;
+json.c:797: 		goto failure;
+json.c:842: 		goto failure;
+json.c:872: 			goto failure;
+json.c:906: 		b = throwaway_buffer;
+json.c:907: 	}
+json.c:948: 						if (!from_surrogate_pair(uc, lc, &unicode))
+json.c:949: 							goto failed; /* Invalid surrogate pair. */
+json.c:974: 				goto failed; /* Invalid UTF-8 character. */
+json.c:989: 			b = throwaway_buffer;
+json.c:990: 		}
+json.c:1093: 		default:
+json.c:1094: 			assert(false);
+json.c:1120: 		default:
+json.c:1121: 			assert(false);
+json.c:1267: 					assert(false);
+json.c:1268: 					if (escape_unicode) {
+json.c:1272: 						strcpy(b, "\\uFFFD");
+json.c:1273: #endif
+json.c:1274: 						b += 6;
+json.c:1275: 					} else {
+json.c:1276: 						*b++ = (char)0xEF;
+json.c:1277: 						*b++ = (char)0xBF;
+json.c:1278: 						*b++ = (char)0xBD;
+json.c:1279: 					}
+json.c:1280: 					s++;
+json.c:1293: 						uint16_t uc, lc;
+json.c:1294: 						assert(unicode <= 0x10FFFF);
+json.c:1295: 						to_surrogate_pair(unicode, &uc, &lc);
+json.c:1296: 						*b++ = '\\';
+json.c:1297: 						*b++ = 'u';
+json.c:1298: 						b += write_hex16(b, uc);
+json.c:1299: 						*b++ = '\\';
+json.c:1300: 						*b++ = 'u';
+json.c:1301: 						b += write_hex16(b, lc);
+json.c:1302: 					}
+json.c:1415: {
+json.c:1416: 	#define problem(...) do { \
+json.c:1417: 			if (errmsg != NULL) \
+json.c:1418: 				snprintf(errmsg, 256, __VA_ARGS__); \
+json.c:1419: 			return false; \
+json.c:1420: 		} while (0)
+json.c:1422: 	if (node->key != NULL && !utf8_validate(node->key))
+json.c:1423: 		problem("key contains invalid UTF-8");
+json.c:1425: 	if (!tag_is_valid(node->tag))
+json.c:1426: 		problem("tag is invalid (%u)", node->tag);
+json.c:1428: 	if (node->tag == JSON_BOOL) {
+json.c:1429: 		if (node->bool_ != false && node->bool_ != true)
+json.c:1430: 			problem("bool_ is neither false (%d) nor true (%d)", (int)false, (int)true);
+json.c:1431: 	} else if (node->tag == JSON_STRING) {
+json.c:1432: 		if (node->string_ == NULL)
+json.c:1433: 			problem("string_ is NULL");
+json.c:1434: 		if (!utf8_validate(node->string_))
+json.c:1435: 			problem("string_ contains invalid UTF-8");
+json.c:1436: 	} else if (node->tag == JSON_ARRAY || node->tag == JSON_OBJECT) {
+json.c:1437: 		JsonNode *head = node->children.head;
+json.c:1438: 		JsonNode *tail = node->children.tail;
+json.c:1440: 		if (head == NULL || tail == NULL) {
+json.c:1441: 			if (head != NULL)
+json.c:1442: 				problem("tail is NULL, but head is not");
+json.c:1443: 			if (tail != NULL)
+json.c:1444: 				problem("head is NULL, but tail is not");
+json.c:1445: 		} else {
+json.c:1446: 			JsonNode *child;
+json.c:1447: 			JsonNode *last = NULL;
+json.c:1449: 			if (head->prev != NULL)
+json.c:1450: 				problem("First child's prev pointer is not NULL");
+json.c:1452: 			for (child = head; child != NULL; last = child, child = child->next) {
+json.c:1453: 				if (child == node)
+json.c:1454: 					problem("node is its own child");
+json.c:1455: 				if (child->next == child)
+json.c:1456: 					problem("child->next == child (cycle)");
+json.c:1457: 				if (child->next == head)
+json.c:1458: 					problem("child->next == head (cycle)");
+json.c:1460: 				if (child->parent != node)
+json.c:1461: 					problem("child does not point back to parent");
+json.c:1462: 				if (child->next != NULL && child->next->prev != child)
+json.c:1463: 					problem("child->next does not point back to child");
+json.c:1465: 				if (node->tag == JSON_ARRAY && child->key != NULL)
+json.c:1466: 					problem("Array element's key is not NULL");
+json.c:1467: 				if (node->tag == JSON_OBJECT && child->key == NULL)
+json.c:1468: 					problem("Object member's key is NULL");
+json.c:1470: 				if (!json_check(child, errmsg))
+json.c:1471: 					return false;
+json.c:1472: 			}
+json.c:1474: 			if (last != tail)
+json.c:1475: 				problem("tail does not match pointer found by starting at head and following next links");
+json.c:1476: 		}
+json.c:1477: 	}
+json.c:1479: 	return true;
+json.c:1481: 	#undef problem
+json.c:1482: }

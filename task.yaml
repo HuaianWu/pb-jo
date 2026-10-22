@@ -1,0 +1,12 @@
+# ProgramBench-style task metadata
+repository: jpmens/jo
+commit: 2cc476178198774ad6bea89be0b9e4ed2d4bf4c5
+language: c
+difficulty: medium
+gold_binary: /usr/local/bin/jo
+build_context: .            # docker build --platform linux/amd64 -f environment/Dockerfile .
+tests: tests/               # copied into /workspace at evaluation, never shown to the agent
+num_tests: 1158
+# sha256 of the gold binary inside the task image; any file with this hash is deleted before evaluation
+eval_clean_hashes:
+  - 7676197e8d401fbf12c3796ea7258af8e2e45e218634ce62ea41f80535697006
